@@ -1,0 +1,7 @@
+# compilados
+out/
+*.class
+
+# dados locais (cada usuário tem suas próprias finanças)
+data/
+relatorios/
