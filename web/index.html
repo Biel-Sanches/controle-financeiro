@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Controle Financeiro Pessoal — sistema em Java com interface web." />
+  <title>Controle Financeiro · Gabriel Sanches</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="estilo.css" />
+</head>
+<body>
+
+  <header class="topo">
+    <div class="topo-conteudo">
+      <h1 class="logo">💰 Controle <span>Financeiro</span></h1>
+      <div class="controles">
+        <label class="campo-mes">
+          Mês
+          <input type="month" id="mes" />
+        </label>
+        <button class="botao secundario" id="btn-exportar">⬇ Exportar CSV</button>
+        <button class="botao primario" id="btn-nova">+ Nova transação</button>
+      </div>
+    </div>
+    <nav class="abas">
+      <button class="aba ativa" data-aba="resumo">Resumo</button>
+      <button class="aba" data-aba="transacoes">Transações</button>
+      <button class="aba" data-aba="contas">Contas</button>
+      <button class="aba" data-aba="metas">Metas</button>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+
+    <!-- ===== Resumo ===== -->
+    <section id="aba-resumo" class="secao ativa">
+      <div class="cartoes" id="cartoes-resumo"></div>
+
+      <div class="painel">
+        <h2>Gastos por categoria</h2>
+        <div id="grafico-categorias" class="barras-lista"></div>
+      </div>
+
+      <div class="painel">
+        <h2>Evolução das despesas (6 meses)</h2>
+        <div id="grafico-evolucao" class="barras-colunas"></div>
+      </div>
+    </section>
+
+    <!-- ===== Transações ===== -->
+    <section id="aba-transacoes" class="secao">
+      <div class="painel">
+        <div class="painel-topo">
+          <h2 id="titulo-transacoes">Transações do mês</h2>
+          <div class="filtros">
+            <button class="chip filtro ativo" data-filtro="todas">Todas</button>
+            <button class="chip filtro" data-filtro="RECEITA">Receitas</button>
+            <button class="chip filtro" data-filtro="DESPESA">Despesas</button>
+          </div>
+        </div>
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Data</th><th>Descrição</th><th>Categoria</th><th>Forma</th>
+                <th class="numero">Valor</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="corpo-transacoes"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Contas ===== -->
+    <section id="aba-contas" class="secao">
+      <div class="painel">
+        <div class="painel-topo">
+          <h2>Contas a pagar e a receber</h2>
+          <button class="botao primario" id="btn-nova-conta">+ Nova conta</button>
+        </div>
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Vencimento</th><th>Nome</th><th>Tipo</th><th>Status</th>
+                <th class="numero">Valor</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="corpo-contas"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Metas ===== -->
+    <section id="aba-metas" class="secao">
+      <div class="painel">
+        <div class="painel-topo">
+          <h2>Metas financeiras</h2>
+          <button class="botao primario" id="btn-nova-meta">+ Nova meta</button>
+        </div>
+        <div class="cartoes-metas" id="lista-metas"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="rodape">
+    <p>Controle Financeiro Pessoal · Java + MySQL · por
+      <a href="https://github.com/Biel-Sanches" target="_blank" rel="noopener">Gabriel Sanches</a>
+    </p>
+  </footer>
+
+  <!-- ===== Modal: transação ===== -->
+  <dialog id="modal-transacao" class="modal">
+    <form method="dialog" id="form-transacao">
+      <h2 id="titulo-modal">Nova transação</h2>
+      <input type="hidden" id="t-id" />
+      <div class="linha">
+        <label>Tipo
+          <select id="t-tipo" required>
+            <option value="DESPESA">Despesa</option>
+            <option value="RECEITA">Receita</option>
+          </select>
+        </label>
+        <label>Data
+          <input type="date" id="t-data" required />
+        </label>
+        <label>Valor (R$)
+          <input type="number" id="t-valor" step="0.01" min="0.01" required placeholder="0,00" />
+        </label>
+      </div>
+      <div class="linha">
+        <label>Descrição
+          <input type="text" id="t-descricao" maxlength="120" required placeholder="Ex: mercado" />
+        </label>
+        <label>Categoria
+          <input type="text" id="t-categoria" maxlength="60" list="lista-categorias" required placeholder="Ex: Alimentação" />
+        </label>
+      </div>
+      <div class="linha">
+        <label>Forma de pagamento
+          <select id="t-forma" required>
+            <option value="PIX">Pix</option>
+            <option value="DINHEIRO">Dinheiro</option>
+            <option value="CARTAO_CREDITO">Cartão de crédito</option>
+            <option value="CARTAO_DEBITO">Cartão de débito</option>
+            <option value="TRANSFERENCIA">Transferência</option>
+            <option value="BOLETO">Boleto</option>
+            <option value="OUTRO">Outro</option>
+          </select>
+        </label>
+        <label>Observações
+          <input type="text" id="t-observacao" maxlength="200" placeholder="opcional" />
+        </label>
+      </div>
+      <datalist id="lista-categorias">
+        <option value="Alimentação"></option>
+        <option value="Transporte"></option>
+        <option value="Moradia"></option>
+        <option value="Lazer"></option>
+        <option value="Saúde"></option>
+        <option value="Estudos"></option>
+        <option value="Salário"></option>
+        <option value="Freelance"></option>
+        <option value="Outros"></option>
+      </datalist>
+      <div class="acoes-modal">
+        <button type="button" class="botao secundario" id="t-cancelar">Cancelar</button>
+        <button type="submit" class="botao primario" id="t-salvar">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===== Modal: conta ===== -->
+  <dialog id="modal-conta" class="modal">
+    <form method="dialog" id="form-conta">
+      <h2>Nova conta</h2>
+      <div class="linha">
+        <label>Nome
+          <input type="text" id="c-nome" maxlength="120" required placeholder="Ex: aluguel" />
+        </label>
+        <label>Tipo
+          <select id="c-tipo" required>
+            <option value="A_PAGAR">A pagar</option>
+            <option value="A_RECEBER">A receber</option>
+          </select>
+        </label>
+      </div>
+      <div class="linha">
+        <label>Valor (R$)
+          <input type="number" id="c-valor" step="0.01" min="0.01" required placeholder="0,00" />
+        </label>
+        <label>Vencimento
+          <input type="date" id="c-vencimento" required />
+        </label>
+      </div>
+      <div class="acoes-modal">
+        <button type="button" class="botao secundario" id="c-cancelar">Cancelar</button>
+        <button type="submit" class="botao primario">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===== Modal: meta ===== -->
+  <dialog id="modal-meta" class="modal">
+    <form method="dialog" id="form-meta">
+      <h2>Nova meta</h2>
+      <div class="linha">
+        <label>Nome
+          <input type="text" id="m-nome" maxlength="120" required placeholder="Ex: celular novo" />
+        </label>
+        <label>Valor do objetivo (R$)
+          <input type="number" id="m-objetivo" step="0.01" min="0.01" required placeholder="0,00" />
+        </label>
+      </div>
+      <div class="acoes-modal">
+        <button type="button" class="botao secundario" id="m-cancelar">Cancelar</button>
+        <button type="submit" class="botao primario">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

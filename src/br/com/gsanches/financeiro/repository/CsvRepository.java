@@ -30,6 +30,9 @@ public abstract class CsvRepository<T> {
 
     protected abstract long idDe(T item);
 
+    /** Recriia o item com outro id (records são imutáveis). */
+    protected abstract T comId(T item, long novoId);
+
     private void carregar() {
         if (!Files.exists(arquivo)) {
             return;
@@ -67,8 +70,11 @@ public abstract class CsvRepository<T> {
         return itens.stream().filter(item -> idDe(item) == id).findFirst();
     }
 
-    /** Insere (id novo) ou atualiza (id já existente). */
+    /** Insere (id 0 gera um novo) ou atualiza (id já existente). */
     public T salvar(T item) {
+        if (idDe(item) == 0) {
+            item = comId(item, proximoId());
+        }
         for (int i = 0; i < itens.size(); i++) {
             if (idDe(itens.get(i)) == idDe(item)) {
                 itens.set(i, item);

@@ -24,7 +24,7 @@ public class MetasService {
         if (valorObjetivo == null || valorObjetivo.signum() <= 0) {
             throw new IllegalArgumentException("O valor do objetivo deve ser maior que zero.");
         }
-        Meta meta = new Meta(metas.proximoId(), nome, valorObjetivo, BigDecimal.ZERO);
+        Meta meta = new Meta(0, nome, valorObjetivo, BigDecimal.ZERO);
         return metas.salvar(meta);
     }
 

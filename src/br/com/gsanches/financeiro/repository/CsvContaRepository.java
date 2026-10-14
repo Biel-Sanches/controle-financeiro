@@ -45,4 +45,10 @@ public class CsvContaRepository extends CsvRepository<Conta> implements ContaRep
     protected long idDe(Conta conta) {
         return conta.id();
     }
+
+    @Override
+    protected Conta comId(Conta conta, long novoId) {
+        return new Conta(novoId, conta.nome(), conta.tipo(), conta.valor(), conta.vencimento(),
+                conta.status(), conta.dataPagamento());
+    }
 }

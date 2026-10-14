@@ -33,11 +33,11 @@ public class FinanceiroService {
 
     // ===== Cadastro =====
 
-    /** Cria uma transação nova (id gerado automaticamente). */
+    /** Cria uma transação nova (o repositório gera o id). */
     public Transacao registrar(LocalDate data, TipoTransacao tipo, String categoria,
                                String descricao, FormaPagamento forma, BigDecimal valor,
                                String observacao) {
-        Transacao nova = new Transacao(transacoes.proximoId(), data, tipo, categoria,
+        Transacao nova = new Transacao(0, data, tipo, categoria,
                 descricao, forma, valor, observacao);
         return salvar(nova);
     }
@@ -126,13 +126,9 @@ public class FinanceiroService {
 
     // ===== Exportação =====
 
-    /**
-     * Exporta as transações do período em CSV (separador ";", com BOM para
-     * o Excel reconhecer acentuação) e devolve o caminho do arquivo gerado.
-     */
-    public Path exportarCsv(LocalDate inicio, LocalDate fim, Path destino) throws IOException {
+    /** Conteúdo CSV do período (com BOM UTF-8 para o Excel). */
+    public String csvConteudo(LocalDate inicio, LocalDate fim) {
         List<Transacao> lista = doPeriodo(inicio, fim);
-        Files.createDirectories(destino.getParent());
         StringBuilder conteudo = new StringBuilder("\uFEFF"); // BOM UTF-8
         conteudo.append("Data;Tipo;Categoria;Descricao;Forma de pagamento;Valor;Observacoes\r\n");
         for (Transacao t : lista) {
@@ -145,7 +141,13 @@ public class FinanceiroService {
                     .append(t.observacao() == null ? "" : t.observacao())
                     .append("\r\n");
         }
-        Files.write(destino, conteudo.toString().getBytes(StandardCharsets.UTF_8));
+        return conteudo.toString();
+    }
+
+    /** Exporta as transações do período em CSV e devolve o caminho gerado. */
+    public Path exportarCsv(LocalDate inicio, LocalDate fim, Path destino) throws IOException {
+        Files.createDirectories(destino.getParent());
+        Files.write(destino, csvConteudo(inicio, fim).getBytes(StandardCharsets.UTF_8));
         return destino;
     }
 }

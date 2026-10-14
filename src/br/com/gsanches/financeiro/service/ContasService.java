@@ -23,9 +23,9 @@ public class ContasService {
         this.contas = contas;
     }
 
-    /** Cria uma conta nova (id gerado automaticamente, status pendente). */
+    /** Cria uma conta nova (o repositório gera o id, status pendente). */
     public Conta criar(String nome, TipoConta tipo, BigDecimal valor, LocalDate vencimento) {
-        Conta nova = new Conta(contas.proximoId(), nome, tipo, valor, vencimento,
+        Conta nova = new Conta(0, nome, tipo, valor, vencimento,
                 StatusConta.PENDENTE, null);
         return salvar(nova);
     }

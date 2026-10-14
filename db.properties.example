@@ -1,0 +1,4 @@
+# Copie este arquivo para db.properties e ajuste suas credenciais
+db.url=jdbc:mysql://localhost:3306/financeiro
+db.usuario=financeiro
+db.senha=suasenha

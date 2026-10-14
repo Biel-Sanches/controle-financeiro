@@ -5,3 +5,12 @@ out/
 # dados locais (cada usuário tem suas próprias finanças)
 data/
 relatorios/
+
+# dependências (baixe com o comando do README)
+lib/
+
+# credenciais do banco (use db.properties.example como modelo)
+db.properties
+
+# script temporário de download do MySQL
+baixar-mysql.ps1

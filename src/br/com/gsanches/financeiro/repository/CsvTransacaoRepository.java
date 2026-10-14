@@ -46,4 +46,10 @@ public class CsvTransacaoRepository extends CsvRepository<Transacao> implements 
     protected long idDe(Transacao t) {
         return t.id();
     }
+
+    @Override
+    protected Transacao comId(Transacao t, long novoId) {
+        return new Transacao(novoId, t.data(), t.tipo(), t.categoria(), t.descricao(),
+                t.formaPagamento(), t.valor(), t.observacao());
+    }
 }

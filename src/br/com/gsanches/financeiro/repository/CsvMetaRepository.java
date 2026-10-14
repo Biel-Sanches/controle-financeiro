@@ -35,4 +35,9 @@ public class CsvMetaRepository extends CsvRepository<Meta> implements MetaReposi
     protected long idDe(Meta meta) {
         return meta.id();
     }
+
+    @Override
+    protected Meta comId(Meta meta, long novoId) {
+        return new Meta(novoId, meta.nome(), meta.valorObjetivo(), meta.valorAcumulado());
+    }
 }
