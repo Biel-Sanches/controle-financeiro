@@ -63,14 +63,15 @@ async function carregarResumo() {
     {
       rotulo: "Contas pendentes",
       valor: String(resumo.pendentes.quantidade),
-      classe: "destaque",
+      classe: "",
+      destaque: true,
       detalhe: resumo.pendentes.quantidade
-        ? `${fmtMoeda.format(resumo.pendentes.total)}${resumo.pendentes.vencidas ? ` · ⚠ ${resumo.pendentes.vencidas} vencida(s)` : ""}`
+        ? `${fmtMoeda.format(resumo.pendentes.total)}${resumo.pendentes.vencidas ? ` · ${resumo.pendentes.vencidas} vencida(s)!` : ""}`
         : "nenhuma",
     },
   ];
   document.getElementById("cartoes-resumo").innerHTML = cartoes.map((c) => `
-    <div class="cartao">
+    <div class="cartao${c.destaque ? " destaque-amarelo" : ""}">
       <span class="rotulo">${c.rotulo}</span>
       <span class="valor ${c.classe}">${c.valor}</span>
       <span class="detalhe">${esc(c.detalhe)}</span>
@@ -128,8 +129,8 @@ function renderizarTransacoes() {
         </td>
         <td>
           <div class="acao-icones">
-            <button class="botao-icones" data-editar="${t.id}" title="Editar">✏️</button>
-            <button class="botao-icones perigo" data-excluir="${t.id}" title="Excluir">🗑️</button>
+            <button class="botao-icones" data-editar="${t.id}" title="Editar">✎</button>
+            <button class="botao-icones perigo" data-excluir="${t.id}" title="Excluir">✕</button>
           </div>
         </td>
       </tr>`).join("")
@@ -184,7 +185,7 @@ async function carregarContas() {
     ? contas.map((c) => {
       const vencida = c.status === "PENDENTE" && new Date(c.vencimento) < new Date(new Date().toDateString());
       const status = vencida
-        ? `<span class="etiqueta alerta">⚠ Vencida</span>`
+        ? `<span class="etiqueta alerta">! Vencida</span>`
         : `<span class="etiqueta ${c.status === "PENDENTE" ? "neutra" : "ok"}">${c.status === "PENDENTE" ? "Pendente" : c.status === "PAGA" ? "Paga" : "Recebida"}</span>`;
       return `
       <tr class="${vencida ? "vencida" : ""}">
@@ -195,8 +196,8 @@ async function carregarContas() {
         <td class="numero">${fmtMoeda.format(c.valor)}</td>
         <td>
           <div class="acao-icones">
-            ${c.status === "PENDENTE" ? `<button class="botao-icones" data-pagar="${c.id}" title="Registrar pagamento">✔️</button>` : ""}
-            <button class="botao-icones perigo" data-excluir-conta="${c.id}" title="Excluir">🗑️</button>
+            ${c.status === "PENDENTE" ? `<button class="botao-icones" data-pagar="${c.id}" title="Registrar pagamento">✓</button>` : ""}
+            <button class="botao-icones perigo" data-excluir-conta="${c.id}" title="Excluir">✕</button>
           </div>
         </td>
       </tr>`;
@@ -236,14 +237,14 @@ async function carregarMetas() {
       const concluida = pctNumero >= 100;
       return `
       <div class="meta-card">
-        <h3>${esc(m.nome)} ${concluida ? "🎉" : ""}</h3>
+        <h3>${esc(m.nome)}${concluida ? " — concluída!" : ""}</h3>
         <div class="meta-numeros">
           <span>Objetivo: <strong>${fmtMoeda.format(m.valorObjetivo)}</strong></span>
           <span>Juntado: <strong>${fmtMoeda.format(m.valorAcumulado)}</strong></span>
           <span>Falta: <strong>${fmtMoeda.format(falta)}</strong></span>
         </div>
         <div class="meta-progresso">
-          <div class="trilho" style="flex:1"><div class="preenchimento" style="width:${pct}%"></div></div>
+          <div class="trilho" style="flex:1"><div class="preenchimento${concluida ? " cheio" : ""}" style="width:${pct}%"></div></div>
           <span class="percentual">${pct.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%</span>
         </div>
         <div class="meta-acoes">
