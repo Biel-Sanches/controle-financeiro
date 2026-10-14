@@ -11,10 +11,10 @@
   --tinta-suave: #5C584E;
   --destaque: #D9A441;
   --destaque-claro: #EAD9A4;
-  --verde: #16A34A;
-  --verde-claro: #D9F3E3;
-  --vermelho: #DC2626;
-  --vermelho-claro: #FDE3E3;
+  --verde: #2B734A;
+  --verde-claro: #DCE7DA;
+  --vermelho: #A63529;
+  --vermelho-claro: #F0DCD6;
   --borda: 2px solid var(--tinta);
   --sombra: 4px 4px 0 var(--tinta);
   --sombra-menor: 3px 3px 0 var(--tinta);
